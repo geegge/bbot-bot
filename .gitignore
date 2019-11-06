@@ -1,0 +1,8 @@
+node_modules
+.env
+combined.log
+error.log
+exceptions.log
+samples/test.txt
+samples/never_commit_messages.txt
+trainingData.txt

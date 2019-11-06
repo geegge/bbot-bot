@@ -1,0 +1,17 @@
+version: "3.2"
+
+services:
+  bbot-geebot:
+    image: bbot-geebot
+    build: .
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    env_file: .env
+
+    command: npm run chat:production

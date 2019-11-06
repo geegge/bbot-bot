@@ -1,0 +1,33 @@
+{
+  "name": "bbot-geebot",
+  "version": "0.2.0",
+  "main": "index.js",
+  "scripts": {
+    "setup": "node --experimental-modules init.js",
+    "start": "node --experimental-modules index.js",
+    "watch": "nodemon --experimental-modules index.js",
+    "debug": "nodemon --experimental-modules --inspect index.js",
+    "chat": "npm start -- -m rocketchat",
+    "chat:production": "npm run chat",
+    "chat:development": "npm run watch -- -m rocketchat"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geegge/bbot-geebot.git"
+  },
+  "author": "Günther Lösel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geegge/bbot-geebot/issues"
+  },
+  "homepage": "https://github.com/geegge/bbot-geebot#readme",
+  "dependencies": {
+    "bbot": "^1.4.0",
+    "esm": "^3.2.20"
+  },
+  "esm": {},
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  },
+  "description": ""
+}
