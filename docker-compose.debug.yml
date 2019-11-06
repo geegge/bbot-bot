@@ -1,8 +1,8 @@
 version: "2.1"
 
 services:
-  bbot-geebot:
-    image: bbot-geebot
+  bbot-bot:
+    image: bbot-bot
     build: .
     environment:
       NODE_ENV: development
