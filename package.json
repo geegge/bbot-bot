@@ -23,7 +23,8 @@
   "homepage": "https://github.com/geegge/bbot-geebot#readme",
   "dependencies": {
     "bbot": "^1.4.0",
-    "esm": "^3.2.20"
+    "esm": "^3.2.20",
+    "node-fetch": "^2.6.0"
   },
   "esm": {},
   "devDependencies": {

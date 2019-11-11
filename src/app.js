@@ -2,9 +2,10 @@
 export {};
 import * as bot from "bbot";
 import { asimovDirective } from "./rules/directives";
-import path from "path";
+import { weather } from "./rules/weather";
 
 asimovDirective();
+weather();
 
 bot.global.text(/say hello to (.*)/i, b => {
   b.respond("Hello " + b.match[1]);
