@@ -6,3 +6,5 @@ exceptions.log
 samples/test.txt
 samples/never_commit_messages.txt
 trainingData.txt
+data
+uploads
