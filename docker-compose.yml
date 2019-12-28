@@ -1,8 +1,73 @@
-version: "3.2"
+version: "2"
 
 services:
+  redis:
+    image: "redis:latest"
+
+  rocketchat:
+    image: rocketchat/rocket.chat:latest
+    command: >
+      bash -c
+        "for i in `seq 1 30`; do
+          node main.js &&
+          s=$$? && break || s=$$?;
+          echo \"Tried $$i times. Waiting 5 secs...\";
+          sleep 5;
+        done; (exit $$s)"
+    volumes:
+      - ./uploads:/app/uploads
+    env_file: .env
+    # environment:
+    # - PORT = ${CHAT_PORT} #3000
+    # - ROOT_URL = $CHAT_ROOT_URL #http://localhost:3000
+    # - MONGO_URL = $CHAT_MONGO_URL #mongodb://mongo:27017/rocketchat
+    # - MONGO_OPLOG_URL = $CHAT_MONGO_OPLOG_URL #mongodb://mongo:27017/local
+    # - MAIL_URL = $CHAT_MAIL_URL #smtp://smtp.email
+    #       - HTTP_PROXY=http://proxy.domain.com
+    #       - HTTPS_PROXY=http://proxy.domain.com
+    depends_on:
+      - mongo
+    ports:
+      - 3000:3000
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:3000"]
+    #   interval: 2s
+    #   timeout: 10s
+    #   retries: 30
+    # labels:
+    #   - "traefik.backend=rocketchat"
+    #   - "traefik.frontend.rule=Host: your.domain.tld"
+
+  mongo:
+    image: mongo:4.0
+    restart: unless-stopped
+    volumes:
+      - ./data/db:/data/db
+      #- ./data/dump:/dump
+    command: mongod --smallfiles --oplogSize 128 --replSet rs0 --storageEngine=mmapv1
+    # labels:
+    #   - "traefik.enable=false"
+
+  # this container's job is just run the command to initialize the replica set.
+  # it will run the command and remove himself (it will not stay running)
+  mongo-init-replica:
+    image: mongo:4.0
+    command: >
+      bash -c
+        "for i in `seq 1 30`; do
+          mongo mongo/rocketchat --eval \"
+            rs.initiate({
+              _id: 'rs0',
+              members: [ { _id: 0, host: 'localhost:27017' } ]})\" &&
+          s=$$? && break || s=$$?;
+          echo \"Tried $$i times. Waiting 5 secs...\";
+          sleep 5;
+        done; (exit $$s)"
+    depends_on:
+      - mongo
   bbot-bot:
-    image: bbot-bot
+    image: geegge/bbot-bot
+    restart: unless-stopped
     build: .
     volumes:
       - .:/usr/src/app
@@ -12,6 +77,18 @@ services:
       options:
         max-size: "200k"
         max-file: "10"
-    env_file: .env
+    environment:
+      - ROCKETCHAT_URL=rocketchat:3000
+      - ROCKETCHAT_ROOM=GENERAL
+      - ROCKETCHAT_USER=boty
+      - ROCKETCHAT_PASSWORD=gpl1x7edfjhmEm
+      - BOT_NAME=bot
+      - LISTEN_ON_ALL_PUBLIC=true
+      - RESPOND_TO_EDITED=true
+      - RESPOND_TO_DM=true
+      - RESPOND_TO_LIVECHAT=true
+      - NODE_ENV=development
+    depends_on:
+      - rocketchat
 
     command: npm run chat:production
