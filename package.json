@@ -3,7 +3,6 @@
   "version": "0.2.0",
   "main": "index.js",
   "scripts": {
-    "setup": "node --experimental-modules init.js",
     "start": "node --experimental-modules index.js",
     "watch": "nodemon --experimental-modules index.js",
     "debug": "nodemon --experimental-modules --inspect index.js",
